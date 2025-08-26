@@ -75,6 +75,37 @@ def create_demo_interface(_instance: "VibeVoiceDemo"):
                     elem_classes="slider-container",
                 )
 
+            gr.Markdown("### 🎵 **Download voices (required)**")
+
+            download_btn = gr.Button("Download Voices")
+
+            def download_voices():
+                yield "Downloading..."
+                for voice in [
+                    "en-Alice_woman",
+                    "en-Carter_man",
+                    "en-Frank_man",
+                    "en-Maya_woman",
+                    "in-Samuel_man",
+                    "zh-Anchen_man_bgm",
+                    "zh-Bowen_man",
+                    "zh-Xinran_woman",
+                ]:
+                    yield f"Downloading {voice}..."
+                    voice_url = f"https://raw.githubusercontent.com/rsxdalv/VibeVoice/refs/heads/main/demo/voices/{voice}.wav"
+                    voice_path = f"./voices/vibevoice/{voice}.wav"
+                    os.makedirs(os.path.dirname(voice_path), exist_ok=True)
+                    # Download the file
+                    import requests
+
+                    response = requests.get(voice_url)
+                    if response.status_code == 200:
+                        with open(voice_path, "wb") as f:
+                            f.write(response.content)
+                    yield f"Downloaded {voice}"
+
+            download_btn.click(fn=download_voices, inputs=[], outputs=[download_btn])
+
         # Right column - Generation
         with gr.Column(scale=2, elem_classes="generation-card"):
             gr.Markdown("### 📝 **Script Input**")
