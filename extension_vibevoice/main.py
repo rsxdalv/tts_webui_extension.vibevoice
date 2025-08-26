@@ -75,11 +75,17 @@ def create_demo_interface(_instance: "VibeVoiceDemo"):
                     elem_classes="slider-container",
                 )
 
-            gr.Markdown("### 🎵 **Download voices (required)**")
+            gr.Markdown("### 🎵 **Download voices (required, restart after download)**")
+            gr.Markdown(
+                "Voices are located in ./voices/vibevoice/ and scanned on startup."
+            )
 
             download_btn = gr.Button("Download Voices")
 
             def download_voices():
+                import os
+                import requests
+
                 yield "Downloading..."
                 for voice in [
                     "en-Alice_woman",
@@ -95,8 +101,6 @@ def create_demo_interface(_instance: "VibeVoiceDemo"):
                     voice_url = f"https://raw.githubusercontent.com/rsxdalv/VibeVoice/refs/heads/main/demo/voices/{voice}.wav"
                     voice_path = f"./voices/vibevoice/{voice}.wav"
                     os.makedirs(os.path.dirname(voice_path), exist_ok=True)
-                    # Download the file
-                    import requests
 
                     response = requests.get(voice_url)
                     if response.status_code == 200:
