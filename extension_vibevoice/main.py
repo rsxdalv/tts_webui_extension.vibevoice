@@ -72,7 +72,14 @@ def create_demo_interface(_instance: "VibeVoiceDemo"):
                     step=0.05,
                     label="CFG Scale (Guidance Strength)",
                     # info="Higher values increase adherence to text",
-                    elem_classes="slider-container",
+                )
+
+                inference_steps = gr.Slider(
+                    minimum=5,
+                    maximum=100,
+                    value=10,
+                    step=1,
+                    label="Inference Steps",
                 )
 
                 attn_implementation = gr.Dropdown(
@@ -242,6 +249,7 @@ Or paste text directly and it will auto-assign speakers.""",
             # Extract speakers and parameters
             speakers = speakers_and_params[:4]  # First 4 are speaker selections
             cfg_scale = speakers_and_params[4]  # CFG scale
+            inference_steps = speakers_and_params[5]  # Inference steps
 
             # Clear outputs and reset visibility at start
             yield None, gr.update(
@@ -268,6 +276,7 @@ Or paste text directly and it will auto-assign speakers.""",
                 speaker_3=speakers[2],
                 speaker_4=speakers[3],
                 cfg_scale=cfg_scale,
+                inference_steps=inference_steps,
             ):
                 final_log = log
 
@@ -332,7 +341,7 @@ Or paste text directly and it will auto-assign speakers.""",
         queue=False,
     ).then(
         fn=generate_podcast_wrapper,
-        inputs=[num_speakers, script_input] + speaker_selections + [cfg_scale],
+        inputs=[num_speakers, script_input] + speaker_selections + [cfg_scale] + [inference_steps],
         outputs=[
             audio_output,
             complete_audio_output,

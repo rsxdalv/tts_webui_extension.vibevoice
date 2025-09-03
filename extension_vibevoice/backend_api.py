@@ -73,7 +73,6 @@ class VibeVoiceDemo:
             algorithm_type="sde-dpmsolver++",
             beta_schedule="squaredcos_cap_v2",
         )
-        self.model.set_ddpm_inference_steps(num_steps=self.inference_steps)
 
         if hasattr(self.model.model, "language_model"):
             print(
@@ -150,6 +149,7 @@ class VibeVoiceDemo:
         speaker_3: str = None,
         speaker_4: str = None,
         cfg_scale: float = 1.3,
+        inference_steps: int = 10,
     ) -> Iterator[tuple]:
         try:
             if not hasattr(self, "model") or self.model is None:
@@ -252,6 +252,8 @@ class VibeVoiceDemo:
 
             # Store current streamer for potential stopping
             self.current_streamer = audio_streamer
+
+            self.model.set_ddpm_inference_steps(num_steps=inference_steps)
 
             # Start generation in a separate thread
             generation_thread = threading.Thread(
@@ -495,6 +497,9 @@ class VibeVoiceDemo:
                 tokenizer=self.processor.tokenizer,
                 generation_config={
                     "do_sample": False,
+                    # only for do_sample=True
+                    # "temperature": 0.95,
+                    # "top_p": 0.95,
                 },
                 audio_streamer=audio_streamer,
                 stop_check_fn=check_stop_generation,  # Pass the stop check function
@@ -630,14 +635,14 @@ def convert_to_16_bit_wav(data):
 demo_instance = None
 
 
-def get_instance(model_path="microsoft/VibeVoice-1.5B"):
+def get_instance(model_path="microsoft/VibeVoice-1.5B", inference_steps=10):
     global demo_instance
     if demo_instance is None:
         """Get the VibeVoice demo instance."""
         demo_instance = VibeVoiceDemo(
             model_path=model_path,
             device="cuda" if torch.cuda.is_available() else "cpu",
-            inference_steps=10,
+            inference_steps=inference_steps,
         )
 
     return demo_instance
