@@ -75,6 +75,13 @@ def create_demo_interface(_instance: "VibeVoiceDemo"):
                     elem_classes="slider-container",
                 )
 
+                attn_implementation = gr.Dropdown(
+                    choices=["sdpa", "flash_attention_2"],
+                    value="flash_attention_2",
+                    label="Attention Implementation",
+                    visible=False,
+                )
+
             gr.Markdown("### 🎵 **Download voices (required, restart after download)**")
             gr.Markdown(
                 "Voices are located in ./voices/vibevoice/ and scanned on startup."
@@ -429,10 +436,15 @@ def vibevoice_ui():
     # Initialize demo instance
     from .backend_api import get_instance
 
-    demo_instance = get_instance()
+    with gr.Tabs():
+        with gr.Tab("VibeVoice-Large"):
+            demo_instance_2 = get_instance("microsoft/VibeVoice-Large")
 
-    # Create interface
-    create_demo_interface(demo_instance)
+            create_demo_interface(demo_instance_2)
+        with gr.Tab("VibeVoice-1.5B"):
+            demo_instance = get_instance("microsoft/VibeVoice-1.5B")
+
+            create_demo_interface(demo_instance)
 
 
 def extension__tts_generation_webui():

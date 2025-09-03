@@ -36,11 +36,12 @@ __file__ = "."
 
 
 class VibeVoiceDemo:
-    def __init__(self, model_path: str, device: str = "cuda", inference_steps: int = 5):
+    def __init__(self, model_path: str, device: str = "cuda", inference_steps: int = 5, attn_implementation="flash_attention_2"):
         """Initialize the VibeVoice demo with model loading."""
         self.model_path = model_path
         self.device = device
         self.inference_steps = inference_steps
+        self.attn_implementation = attn_implementation
         self.is_generating = False  # Track generation state
         self.stop_generation = False  # Flag to stop generation
         self.current_streamer = None  # Track current audio streamer
@@ -61,8 +62,8 @@ class VibeVoiceDemo:
         self.model = VibeVoiceForConditionalGenerationInference.from_pretrained(
             self.model_path,
             torch_dtype=torch.bfloat16,
-            device_map="cuda",
-            attn_implementation="flash_attention_2",
+            device_map=self.device,
+            attn_implementation=self.attn_implementation,
         )
         self.model.eval()
 
@@ -629,12 +630,12 @@ def convert_to_16_bit_wav(data):
 demo_instance = None
 
 
-def get_instance():
+def get_instance(model_path="microsoft/VibeVoice-1.5B"):
     global demo_instance
     if demo_instance is None:
         """Get the VibeVoice demo instance."""
         demo_instance = VibeVoiceDemo(
-            model_path="microsoft/VibeVoice-1.5B",
+            model_path=model_path,
             device="cuda" if torch.cuda.is_available() else "cpu",
             inference_steps=10,
         )
