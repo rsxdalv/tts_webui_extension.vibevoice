@@ -447,7 +447,7 @@ def vibevoice_ui():
 
     with gr.Tabs():
         with gr.Tab("VibeVoice-Large"):
-            demo_instance_2 = get_instance("microsoft/VibeVoice-Large")
+            demo_instance_2 = get_instance("rsxdalv/VibeVoice-Large")
 
             create_demo_interface(demo_instance_2)
         with gr.Tab("VibeVoice-1.5B"):
