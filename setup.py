@@ -1,12 +1,12 @@
 import setuptools
 
 setuptools.setup(
-    name="extension_vibevoice",
+    name="tts_webui_extension.vibevoice",
     packages=setuptools.find_namespace_packages(),
     version="0.2.1",
     author="rsxdalv",
     description="A template extension for TTS Generation WebUI",
-    url="https://github.com/rsxdalv/extension_vibevoice",
+    url="https://github.com/rsxdalv/tts_webui_extension.vibevoice",
     project_urls={},
     scripts=[],
     install_requires=[
@@ -18,3 +18,4 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
 )
+
