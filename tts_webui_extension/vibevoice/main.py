@@ -5,6 +5,7 @@ import torch
 
 from typing import TYPE_CHECKING
 
+
 if TYPE_CHECKING:
     from .backend_api import VibeVoiceDemo
 
@@ -444,6 +445,7 @@ def vibevoice_ui():
 
     # Initialize demo instance
     from .backend_api import get_instance
+    from .backend_api import get_instance_15
 
     with gr.Tabs():
         with gr.Tab("VibeVoice-Large"):
@@ -451,7 +453,7 @@ def vibevoice_ui():
 
             create_demo_interface(demo_instance_2)
         with gr.Tab("VibeVoice-1.5B"):
-            demo_instance = get_instance("microsoft/VibeVoice-1.5B")
+            demo_instance = get_instance_15("microsoft/VibeVoice-1.5B")
 
             create_demo_interface(demo_instance)
 

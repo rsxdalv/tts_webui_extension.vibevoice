@@ -21,7 +21,7 @@ from vibevoice.modular.modeling_vibevoice_inference import (
 from vibevoice.processor.vibevoice_processor import VibeVoiceProcessor
 from vibevoice.modular.streamer import AudioStreamer
 from transformers.utils import logging
-from transformers import set_seed
+from tts_webui.utils.manage_model_state import manage_model_state
 
 logging.set_verbosity_info()
 logger = logging.get_logger(__name__)
@@ -30,7 +30,13 @@ __file__ = "."
 
 
 class VibeVoiceDemo:
-    def __init__(self, model_path: str, device: str = "cuda", inference_steps: int = 5, attn_implementation="flash_attention_2"):
+    def __init__(
+        self,
+        model_path: str,
+        device: str = "cuda",
+        inference_steps: int = 5,
+        attn_implementation="flash_attention_2",
+    ):
         """Initialize the VibeVoice demo with model loading."""
         self.model_path = model_path
         self.device = device
@@ -626,17 +632,18 @@ def convert_to_16_bit_wav(data):
     return data
 
 
-demo_instance = None
-
-
+@manage_model_state("vibevoice")
 def get_instance(model_path="microsoft/VibeVoice-1.5B", inference_steps=10):
-    global demo_instance
-    if demo_instance is None:
-        """Get the VibeVoice demo instance."""
-        demo_instance = VibeVoiceDemo(
-            model_path=model_path,
-            device="cuda" if torch.cuda.is_available() else "cpu",
-            inference_steps=inference_steps,
-        )
+    return VibeVoiceDemo(
+        model_path=model_path,
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        inference_steps=inference_steps,
+    )
 
-    return demo_instance
+@manage_model_state("vibevoice-1.5")
+def get_instance_15(model_path="microsoft/VibeVoice-1.5B", inference_steps=10):
+    return VibeVoiceDemo(
+        model_path=model_path,
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        inference_steps=inference_steps,
+    )
